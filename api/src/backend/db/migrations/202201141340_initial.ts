@@ -15,6 +15,9 @@ export async function up(knex: Knex): Promise<void> {
          */
         builder.increments("id", { primaryKey: true });
         builder.text("display_name");
+        builder.integer("briefs_submitted").defaultTo(0);
+        builder.text("getstream_token");
+
 
         auditFields(knex, builder);
     }).then(onUpdateTrigger(knex, usersTableName));
@@ -54,12 +57,12 @@ export async function up(knex: Knex): Promise<void> {
 
     const projectStatusTableName = "project_status";
     await knex.schema.createTable(projectStatusTableName, builder => {
+        builder.increments("id", { primaryKey: true });
         builder.text("status");
-        builder.primary(["status"]);
-
         auditFields(knex, builder);
     }).then(onUpdateTrigger(knex, projectStatusTableName));
 
+<<<<<<< HEAD:api/src/backend/db/migrations/20220114134044_initial.ts
     /**
      *  pub struct Project<AccountId, Balance, BlockNumber> {
      *      name: Vec<u8>,
@@ -75,6 +78,8 @@ export async function up(knex: Knex): Promise<void> {
      *      create_block_number: BlockNumber,
      *  }
      */
+=======
+>>>>>>> upstream/imbue-enterprise:api/src/backend/db/migrations/202201141340_initial.ts
 
     const projectsTableName = "projects";
     await knex.schema.createTable(projectsTableName, (builder: Knex.CreateTableBuilder) => {
@@ -86,10 +91,11 @@ export async function up(knex: Knex): Promise<void> {
         builder.integer("category");
         builder.integer("currency_id");
         builder.integer("chain_project_id");
-
-        builder.text("status").notNullable().defaultTo("draft");
-        builder.foreign("status")
-            .references("project_status.status")
+        builder.decimal("total_cost_without_fee", 10, 2);
+        builder.decimal("imbue_fee", 10, 2);
+        builder.integer("status_id").notNullable().defaultTo(1);
+        builder.foreign("status_id")
+            .references("project_status.id")
             .onDelete("SET NULL")
             .onUpdate("CASCADE");
 
@@ -101,7 +107,11 @@ export async function up(knex: Knex): Promise<void> {
         // This type holds numbers as big as 1e128 and beyond (incl. fractional
         // scale). The emphasis is on precision, while arithmetical efficiency
         // takes a hit.
+<<<<<<< HEAD:api/src/backend/db/migrations/20220114134044_initial.ts
         builder.decimal("required_funds", null).notNullable();
+=======
+        builder.decimal("required_funds", 10, 2).notNullable();
+>>>>>>> upstream/imbue-enterprise:api/src/backend/db/migrations/202201141340_initial.ts
 
         // FIXME: this will need to be ACID, hence we will
         // need to update it from the blockchain.
@@ -155,6 +165,37 @@ export async function up(knex: Knex): Promise<void> {
     }).then(onUpdateTrigger(knex, projectsTableName));
 
     /**
+<<<<<<< HEAD:api/src/backend/db/migrations/20220114134044_initial.ts
+=======
+     *  pub struct Milestone {
+     *      project_key: ProjectIndex,
+     *      milestone_index: MilestoneIndex,
+     *      name: Vec<u8>,
+     *      percentage_to_unlock: u32,
+     *      is_approved: bool
+     *  }
+     */
+    const milestonesTableName = "milestones";
+    await knex.schema.createTable(milestonesTableName, (builder) => {
+        builder.integer("milestone_index");
+        builder.integer("project_id").notNullable();
+        builder.primary(["project_id", "milestone_index"]);
+        builder.decimal("amount");
+
+        builder.foreign("project_id")
+            .references("projects.id")
+            .onDelete("CASCADE")
+            .onUpdate("CASCADE");
+
+        builder.text("name");
+        builder.integer("percentage_to_unlock");
+        builder.boolean("is_approved").defaultTo(false);
+
+        auditFields(knex, builder);
+    }).then(onUpdateTrigger(knex, milestonesTableName));
+
+    /**
+>>>>>>> upstream/imbue-enterprise:api/src/backend/db/migrations/202201141340_initial.ts
      * TODO: ? votes and contributions
      *
      * It's not clear that this will ever be anything that needs to be

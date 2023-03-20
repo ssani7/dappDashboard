@@ -5,7 +5,7 @@ import {signatureVerify} from "@polkadot/util-crypto";
 
 import {decodeAddress, encodeAddress} from "@polkadot/keyring";
 import {hexToU8a, isHex} from '@polkadot/util';
-
+import {ensureParams, cookieExtractor, jwtOptions} from "../common"
 import {
     fetchUser,
     fetchWeb3Account,
@@ -22,6 +22,7 @@ import * as passportJwt from "passport-jwt"
 // @ts-ignore
 import jwt from 'jsonwebtoken';
 import config from "../../../../config";
+import { StreamChat } from 'stream-chat';
 
 const JwtStrategy = passportJwt.Strategy;
 
@@ -31,16 +32,7 @@ type Solution = {
     type: string;
 };
 
-const cookieExtractor = function(req: any) {
-    let token: any | null = null;
-    if (req && req.cookies) token = req.cookies['access_token'];
-    return token;
-};
 
-const jwtOptions = {
-    jwtFromRequest: cookieExtractor,
-    secretOrKey: 'mysecretword'
-};
 
 // @ts-ignore
 export const polkadotJsStrategy = new JwtStrategy(jwtOptions, async function(jwt_payload, next) {
@@ -62,24 +54,6 @@ export const polkadotJsStrategy = new JwtStrategy(jwtOptions, async function(jwt
     }
 });
 
-/**
- * FIXME: move this to a more common location to be reused.
- */
-const ensureParams = (
-    record: Record<string, any>,
-    next: CallableFunction,
-    params: string[]
-) => {
-    try {
-        for (let name of params) {
-            if (!(record[name] && String(record[name]).trim())) {
-                throw new Error(`Missing ${name} param.`);
-            }
-        }
-    } catch (e) {
-        next(e);
-    }
-}
 
 export const polkadotJsAuthRouter = express.Router();
 
@@ -103,6 +77,9 @@ polkadotJsAuthRouter.post("/", (req, res, next) => {
         (err as any).status = 400;
         next(err);
     }
+
+
+
 
     // If no address can be found, create a `users` and then a
     // `federated_credential`

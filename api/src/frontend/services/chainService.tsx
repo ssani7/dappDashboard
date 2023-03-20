@@ -331,7 +331,11 @@ class ChainService {
         const rounds: any =
             await await this.imbueApi.imbue.api.query.imbueProposals.rounds.entries();
 
+<<<<<<< HEAD
         let roundKey = undefined;
+=======
+        let roundKey:number | undefined = undefined;
+>>>>>>> upstream/imbue-enterprise
         for (var i = Object.keys(rounds).length - 1; i >= 0; i--) {
             const [id, round] = rounds[i];
             const readableRound = round.toHuman();
@@ -420,7 +424,11 @@ class ChainService {
             ),
             currencyId:
                 projectOnChain.currencyId == "Native"
+<<<<<<< HEAD
                     ? ("IMBU" as Currency)
+=======
+                    ? (Currency.IMBU)
+>>>>>>> upstream/imbue-enterprise
                     : (projectOnChain.currencyId as Currency),
             milestones: milestones,
             contributions: Object.keys(projectOnChain.contributions).map(
@@ -448,10 +456,17 @@ class ChainService {
         let milestones: Milestone[] = Object.keys(projectOnChain.milestones).map((milestoneItem: any) => projectOnChain.milestones[milestoneItem]).map(
             (milestone: any) =>
             ({
+<<<<<<< HEAD
                 projectKey: Number(milestone.projectKey),
                 milestoneKey: Number(milestone.milestoneKey),
                 name: milestone.name,
                 percentageToUnlock: Number(
+=======
+                project_id: Number(milestone.projectKey),
+                milestone_key: Number(milestone.milestoneKey),
+                name: milestone.name,
+                percentage_to_unlock: Number(
+>>>>>>> upstream/imbue-enterprise
                     milestone.percentageToUnlock
                 ),
                 isApproved: milestone.isApproved,
@@ -482,7 +497,7 @@ class ChainService {
             (milestone) => !milestone.isApproved
         );
         if (firstmilestone) {
-            return firstmilestone.milestoneKey;
+            return firstmilestone.milestone_key;
         }
         return -1;
     }
@@ -493,7 +508,7 @@ class ChainService {
             .reverse()
             .find((milestone) => milestone.isApproved);
         if (firstmilestone) {
-            return firstmilestone.milestoneKey;
+            return firstmilestone.milestone_key;
         }
         return -1;
     }

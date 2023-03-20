@@ -90,14 +90,23 @@ router.post("/", passport.authenticate('jwt', { session: false }),(req, res, nex
 
     db.transaction(async tx => {
         try {
+<<<<<<< HEAD
             const project = await models.updateMilestoneDetails(
                 req.body.milestoneDetails.project_id,req.body.milestoneDetails.milestone_id,req.body.milestoneDetails.milestone_details
+=======
+            const project = await models.insertMilestoneDetails(
+                req.body.milestoneDetails
+>>>>>>> upstream/imbue-enterprise
             )(tx);
 
             res.status(201).send(project);
         } catch (cause) {
             next(new Error(
+<<<<<<< HEAD
                 `Failed to add milestone details`,
+=======
+                `Failed to insert milestone.`,
+>>>>>>> upstream/imbue-enterprise
                 {cause: cause as Error}
             ));
         }
