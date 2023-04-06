@@ -52,6 +52,12 @@ app.get("/", (req, res) => {
     res.redirect("/dapp");
 });
 
+app.get("*.js", (req, res, next) => {
+    req.url = req.url + '.gz';
+    res.set('Content-Encoding', 'gzip');
+    next();
+});
+
 // uncaught error
 app.use(errorHandler(environment));
 
