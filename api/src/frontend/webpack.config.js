@@ -1,4 +1,5 @@
 const path = require("path");
+var mode = process.env.NODE_ENV || 'development';
 
 module.exports = {
     entry: {
@@ -14,7 +15,6 @@ module.exports = {
         "freelancer-profile": path.resolve(__dirname, "pages", "freelancer", "profile.tsx"),
         "new-project": path.resolve(__dirname, "pages", "projects", "new.tsx"),
         "freelancers": path.resolve(__dirname, "pages", "freelancer", "index.tsx"),
-        "googlelogin": path.resolve(__dirname, "googlelogin.tsx"),
         "join": path.resolve(__dirname, "join.tsx"),
         "submit-proposal": path.resolve(__dirname, "pages", "briefs", "submit.tsx"),
         "application-preview": path.resolve(__dirname, "pages", "briefs", "application-preview.tsx"),
@@ -22,7 +22,7 @@ module.exports = {
     },
     devtool: process.env.NODE_ENV === "development"
         ? "inline-source-map"
-        : void 0,
+        : false,
     module: {
         rules: [
             {
@@ -50,10 +50,7 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: [".js", ".ts", ".tsx"],
-        alias: {
-            lib: path.resolve(__dirname, "lib"),
-        },
+        extensions: [".ts", ".tsx", ".js", ".jsx"],
         fallback: {
             "crypto": require.resolve("crypto-browserify"),
             "stream": require.resolve("stream-browserify"),
@@ -63,6 +60,12 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "../../public/lib"),
     },
+    mode: mode,
+    performance: {
+        hints: false,
+        maxEntrypointSize: 512000,
+        maxAssetSize: 512000
+      },
     watchOptions: {
         poll: true
     },
