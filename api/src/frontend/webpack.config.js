@@ -1,5 +1,8 @@
 const path = require("path");
-var mode = process.env.NODE_ENV || 'development';
+const TerserPlugin = require("terser-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
+
+var mode = process.env.NODE_ENV || "development";
 
 module.exports = {
     entry: {
@@ -50,7 +53,10 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: [".ts", ".tsx", ".js", ".jsx"],
+        extensions: [".js", ".ts", ".tsx"],
+        alias: {
+            lib: path.resolve(__dirname, "lib"),
+        },
         fallback: {
             "crypto": require.resolve("crypto-browserify"),
             "stream": require.resolve("stream-browserify"),
@@ -61,13 +67,17 @@ module.exports = {
         path: path.resolve(__dirname, "../../public/lib"),
     },
     mode: mode,
-    performance: {
-        hints: false,
-        maxEntrypointSize: 512000,
-        maxAssetSize: 512000
-      },
-    watchOptions: {
-        poll: true
+    // watchOptions: {
+    //     poll: true,
+    // },
+    optimization: {
+        splitChunks: {
+            chunks: 'async'
+        },
+        minimize: true,
+        minimizer: [new TerserPlugin()],
     },
-    plugins: []
+    plugins: [
+        new CompressionPlugin({deleteOriginalAssets: true, threshold:10240, minRatio:0.8}),
+      ],
 };
